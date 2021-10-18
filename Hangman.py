@@ -1,5 +1,6 @@
 import random
-
+import requests
+from bs4 import BeautifulSoup
 
 def checkTries(tries):
     if tries == 0:
@@ -52,3 +53,11 @@ while result == False and tries < 6:
             print('Game over: out of tries')
             print(f"The word is: {''.join(hiddenword)}")
 
+
+base_url = 'https://www.dictionary.com/browse/'+''.join(hiddenword)
+r = requests.get(base_url)
+soup = BeautifulSoup(r.content, features="html.parser")
+classa = "css-xxaj7r"
+
+results = soup.find(class_= "css-10ul8x e1q3nk1v2")
+print("Meaning: "+results.text)
