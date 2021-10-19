@@ -1,5 +1,6 @@
 import random
 import requests
+import string
 from bs4 import BeautifulSoup
 from Game_clss import Game
 
@@ -27,7 +28,9 @@ with open("sowpods.txt",'r') as sp:
     #print(word)
 
 #The guessing game
-name = input("Please insert your username: ")
+botguess = string.ascii_uppercase[:26]
+#name = input("Please insert your username: ")
+name = "bot"+str(random.randint(1,10))
 hiddenword = list(word.strip())
 #print(hiddenword)
 result = False
@@ -36,7 +39,8 @@ guesses = []
 tries = 0
 while result == False and tries < 6:
     counter = 0
-    guess = input('Pick a letter: ').upper()
+    #guess = input('Pick a letter: ').upper()
+    guess = botguess[random.randint(0,25)]
     if guess in guesses:
         print('Try another letter')
     else:
@@ -70,8 +74,8 @@ try:
     results = soup.find(class_= "css-10ul8x e1q3nk1v2")
     print("Meaning: "+results.text)
 
-except requests.ConnectionError:
-    print("Word is so odd, it has no entries in the dictionary!")
+except AttributeError:
+    print("Word is so rare, it has no entries in the dictionary")
 
 #Store results on database via Postgre
 import psycopg2 as conector
