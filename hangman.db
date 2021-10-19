@@ -1,0 +1,7 @@
+CREATE TABLE GAME(
+                ID serial not null, 
+                NAME text not null, 
+                RESULT text not null, 
+                TRIES integer not null, 
+                WORD text not null, 
+                primary key (ID));
