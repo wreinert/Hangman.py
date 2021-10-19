@@ -32,7 +32,6 @@ botguess = string.ascii_uppercase[:26]
 #name = input("Please insert your username: ")
 name = "bot"+str(random.randint(1,10))
 hiddenword = list(word.strip())
-#print(hiddenword)
 result = False
 show = ['-']*len(hiddenword)
 guesses = []
