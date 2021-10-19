@@ -71,7 +71,7 @@ try:
     print("Meaning: "+results.text)
 
 except requests.ConnectionError:
-    print("Word is so rare, it has no entries in the dictionary")
+    print("Word is so odd, it has no entries in the dictionary!")
 
 #Store results on database via Postgre
 import psycopg2 as conector
