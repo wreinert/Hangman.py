@@ -61,14 +61,17 @@ while result == False and tries < 6:
             win_lose = "L"
 
 #Fetches the meaning of the word on the web and displays it
-base_url = 'https://www.dictionary.com/browse/'+''.join(hiddenword)
-r = requests.get(base_url)
-soup = BeautifulSoup(r.content, features="html.parser")
-classa = "css-xxaj7r"
+try:
+    base_url = 'https://www.dictionary.com/browse/'+''.join(hiddenword)
+    r = requests.get(base_url)
+    soup = BeautifulSoup(r.content, features="html.parser")
+    classa = "css-xxaj7r"
 
-results = soup.find(class_= "css-10ul8x e1q3nk1v2")
-print("Meaning: "+results.text)
+    results = soup.find(class_= "css-10ul8x e1q3nk1v2")
+    print("Meaning: "+results.text)
 
+except requests.ConnectionError:
+    print("Word is so rare, it has no entries in the dictionary")
 
 #Store results on database via Postgre
 import psycopg2 as conector
