@@ -1,6 +1,7 @@
 import random
 import requests
 import string
+import psycopg2 as conector
 from bs4 import BeautifulSoup
 from Game_clss import Game
 
@@ -21,6 +22,52 @@ def checkTries(tries):
     elif tries == 6:
         print("------\n|    X\n|   /|\ \n|   / \ ")
 
+#Function that pulls up the ranking (TOP 10) by number of tries
+def ranking():
+    try:
+        conexao = conector.connect("dbname = hangman user=postgres password=null")
+        cursor = conexao.cursor()
+
+        comando = '''SELECT NAME, RESULT, TRIES, WORD FROM GAME ORDER BY TRIES LIMIT 10;'''
+        cursor.execute(comando)
+        #conexao.commit()
+        top_players = cursor.fetchall()
+        print("Player      | Result | Tries | Word \n ------------------------------------")
+        for row in top_players:
+            print(row[0].ljust(11," "),"|", row[1].center(6," "),"|", str(row[2]).center(5," "),"|", row[3]) #aligns the printed result in columns
+
+    except conector.DatabaseError as err:
+        print('Erro de banco de dados', err)
+
+    finally:
+        if conexao:
+            cursor.close()
+            conexao.close()
+
+#Game menu function
+def game_menu(usr_option):
+    option = False
+    while option == False:
+        if usr_option.upper() == "EXIT":
+            print("You exited the game")
+            option = True
+            raise SystemExit(0)
+        elif usr_option.upper() == "RANKING":
+            ranking()
+            option = True
+            raise SystemExit(0)
+        elif usr_option.upper() == "PLAY":
+            option = True
+            pass
+        else:
+            print("Please enter a valid option")
+            
+#Please select:
+#-Play
+#-Ranking
+#-Exit
+game_menu(usr_option = input("Please select \n >Play \n >Ranking \n >Exit \n"))
+
 #Fetches random word from sowpods.txt
 with open("sowpods.txt",'r') as sp:
     line = sp.readlines()
@@ -28,9 +75,9 @@ with open("sowpods.txt",'r') as sp:
     #print(word)
 
 #The guessing game
-botguess = string.ascii_uppercase[:26]
-#name = input("Please insert your username: ")
-name = "bot"+str(random.randint(1,10))
+#botguess = string.ascii_uppercase[:26]
+name = input("Please insert your username: ")
+#name = "bot"+str(random.randint(1,10))
 hiddenword = list(word.strip())
 result = False
 show = ['-']*len(hiddenword)
@@ -38,8 +85,8 @@ guesses = []
 tries = 0
 while result == False and tries < 6:
     counter = 0
-    #guess = input('Pick a letter: ').upper()
-    guess = botguess[random.randint(0,25)]
+    guess = input('Pick a letter: ').upper()
+    #guess = botguess[random.randint(0,25)]
     if guess in guesses:
         print('Try another letter')
     else:
@@ -68,8 +115,7 @@ try:
     base_url = 'https://www.dictionary.com/browse/'+''.join(hiddenword)
     r = requests.get(base_url)
     soup = BeautifulSoup(r.content, features="html.parser")
-    classa = "css-xxaj7r"
-
+    #classa = "css-xxaj7r"
     results = soup.find(class_= "css-10ul8x e1q3nk1v2")
     print("Meaning: "+results.text)
 
@@ -77,8 +123,6 @@ except AttributeError:
     print("Word is so rare, it has no entries in the dictionary")
 
 #Store results on database via Postgre
-import psycopg2 as conector
-
 game = Game(name, win_lose, tries, ''.join(hiddenword))
 
 try:
